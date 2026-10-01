@@ -1,0 +1,165 @@
+/**
+ * Shani Foundation Gradient System
+ * Reusable tokens, glassmorphism, animated backgrounds, and noise texture
+ */
+
+:root {
+  /* Core brand gradients */
+  --grad-brand: linear-gradient(135deg, #4A0A38 0%, #7A0F5A 45%, #A3277A 100%);
+  --grad-bloom: linear-gradient(135deg, #7A0F5A 0%, #A3277A 55%, #E8A33D 130%);
+  --grad-growth: linear-gradient(135deg, #2E5A2B 0%, #3F7D2B 55%, #8DB63C 100%);
+  --grad-sunrise: linear-gradient(180deg, #FCF1DC 0%, #F6E4F0 100%);
+  --grad-gold: linear-gradient(90deg, #E8A33D 0%, #F3C566 50%, #E8A33D 100%);
+  
+  /* Hero Mesh Gradient */
+  --grad-mesh-hero: radial-gradient(at 0% 0%, rgba(246, 228, 240, 0.6) 0px, transparent 50%),
+                    radial-gradient(at 100% 100%, rgba(252, 241, 220, 0.6) 0px, transparent 50%),
+                    radial-gradient(at 50% 100%, rgba(141, 182, 60, 0.1) 0px, transparent 50%),
+                    #FFFDFA;
+
+  /* Photo overlay for high-contrast legibility */
+  --grad-overlay: linear-gradient(to top, rgba(74, 10, 56, 0.75) 0%, rgba(74, 10, 56, 0) 100%);
+  
+  /* Modern Glassmorphic panel */
+  --grad-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.35) 100%);
+
+  /* Per-focus area gradients */
+  --grad-focus-menstrual: linear-gradient(135deg, #A3277A 0%, #7A0F5A 100%);
+  --grad-focus-empowerment: linear-gradient(135deg, #E8A33D 0%, #F3C566 100%);
+  --grad-focus-climate: linear-gradient(135deg, #3F7D2B 0%, #8DB63C 100%);
+  --grad-focus-child: linear-gradient(135deg, #7A0F5A 0%, #4A0A38 100%);
+
+  /* Motion CSS variables */
+  --dur-fast: 150ms;
+  --dur-base: 400ms;
+  --dur-slow: 700ms;
+  --dur-ambient: 14s;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Gradient Classes */
+.bg-grad-brand {
+  background: var(--grad-brand);
+}
+
+.bg-grad-bloom {
+  background: var(--grad-bloom);
+}
+
+.bg-grad-growth {
+  background: var(--grad-growth);
+}
+
+.bg-grad-sunrise {
+  background: var(--grad-sunrise);
+}
+
+.bg-grad-gold {
+  background: var(--grad-gold);
+}
+
+.bg-grad-mesh-hero {
+  background: var(--grad-mesh-hero);
+}
+
+.bg-grad-glass {
+  background: var(--grad-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+/* Focus Pillar Gradient Badges & Washes */
+.bg-grad-menstrual { background: var(--grad-focus-menstrual); }
+.bg-grad-empowerment { background: var(--grad-focus-empowerment); }
+.bg-grad-climate { background: var(--grad-focus-climate); }
+.bg-grad-child { background: var(--grad-focus-child); }
+
+/* Gradient text with fallback color for high-contrast accessibility */
+.text-gradient-bloom {
+  color: #7A0F5A; /* accessible fallback */
+  background: var(--grad-bloom);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-gold {
+  color: #CC8A2B;
+  background: var(--grad-gold);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Subtle noise/grain layer overlay (3-4% opacity) to prevent gradient banding */
+.grain-overlay {
+  position: relative;
+}
+.grain-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  z-index: 1;
+}
+
+/* Shifting animated gradient for Get Involved band & buttons */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient-shift {
+  background-size: 200% 200% !important;
+  animation: gradientShift 14s ease infinite;
+}
+
+/* Shimmer sweep effect (crossing button every 6s) */
+@keyframes shimmerSweep {
+  0% { transform: translateX(-150%) skewX(-20deg); }
+  25%, 100% { transform: translateX(250%) skewX(-20deg); }
+}
+
+.shimmer-btn-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-sweep {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.35) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmerSweep 6s infinite ease-in-out;
+  pointer-events: none;
+}
+
+/* Rotating conic gradient ring for "We Got You" badge */
+@keyframes conicRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.conic-ring {
+  background: conic-gradient(from 0deg, #7A0F5A, #A3277A, #E8A33D, #7A0F5A);
+  animation: conicRotate 6s linear infinite;
+}
+
+/* Paused animations override */
+.motion-paused *,
+.motion-paused *::before,
+.motion-paused *::after {
+  animation-play-state: paused !important;
+  transition: opacity 150ms ease !important;
+}

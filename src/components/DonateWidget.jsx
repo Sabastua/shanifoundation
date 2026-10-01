@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, Smartphone, CreditCard, Building2, Check, ShieldCheck, Sparkles } from 'lucide-react';
-import confetti from 'canvas-confetti';
+import { triggerLeafConfetti } from './motion/LeafConfetti';
+import { useAnimationContext } from '../motion/hooks/useAnimationContext';
 
 export default function DonateWidget({ isModal = false, onClose }) {
   const [frequency, setFrequency] = useState('one-time'); // 'one-time' | 'monthly'
@@ -10,6 +12,7 @@ export default function DonateWidget({ isModal = false, onClose }) {
   const [donorName, setDonorName] = useState('');
   const [donorPhone, setDonorPhone] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const { isReducedMotion } = useAnimationContext();
 
   const presets = [500, 1000, 2500];
 
@@ -39,24 +42,20 @@ export default function DonateWidget({ isModal = false, onClose }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsSubmitted(true);
-    try {
-      confetti({
-        particleCount: 80,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#A3277A', '#3F7D2B', '#E8A33D', '#7A0F5A'],
-      });
-    } catch {
-      // Ignore if confetti not supported
-    }
+    triggerLeafConfetti();
   };
 
   if (isSubmitted) {
     return (
       <div className="bg-white p-8 sm:p-10 rounded-organic text-center border border-magenta-100 shadow-brand">
-        <div className="w-16 h-16 rounded-full bg-magenta-100 text-magenta-500 mx-auto flex items-center justify-center mb-5 animate-bounce">
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 14 }}
+          className="w-16 h-16 rounded-full bg-magenta-100 text-magenta-500 mx-auto flex items-center justify-center mb-5"
+        >
           <Heart className="w-8 h-8 fill-magenta-500 text-magenta-500" />
-        </div>
+        </motion.div>
         <span className="inline-block px-3 py-1 rounded-full bg-gold-100 text-ink-900 text-xs font-bold uppercase tracking-wider mb-2">
           Asante Sana • Thank You
         </span>
@@ -86,7 +85,7 @@ export default function DonateWidget({ isModal = false, onClose }) {
             setIsSubmitted(false);
             if (onClose) onClose();
           }}
-          className="px-6 py-2.5 rounded-full bg-magenta-500 text-white font-semibold text-sm hover:bg-magenta-600 transition-colors shadow-sm"
+          className="px-6 py-2.5 rounded-full bg-grad-brand text-white font-semibold text-sm hover:opacity-95 transition-opacity shadow-sm"
         >
           {isModal ? 'Close Window' : 'Make Another Pledge'}
         </button>
@@ -115,15 +114,13 @@ export default function DonateWidget({ isModal = false, onClose }) {
         </p>
       </div>
 
-      {/* Frequency Toggle */}
-      <div className="grid grid-cols-2 p-1 bg-cream-100 rounded-full mb-6 max-w-xs mx-auto border border-black/5">
+      {/* Sliding Pill Indicator for One-Time / Monthly Toggle */}
+      <div className="relative grid grid-cols-2 p-1 bg-cream-100 rounded-full mb-6 max-w-xs mx-auto border border-black/5">
         <button
           type="button"
           onClick={() => setFrequency('one-time')}
-          className={`py-2 text-xs sm:text-sm font-bold rounded-full transition-all duration-200 ${
-            frequency === 'one-time'
-              ? 'bg-plum-700 text-white shadow-xs'
-              : 'text-ink-600 hover:text-ink-900'
+          className={`relative z-10 py-2 text-xs sm:text-sm font-bold transition-colors ${
+            frequency === 'one-time' ? 'text-white' : 'text-ink-600 hover:text-ink-900'
           }`}
         >
           One-Time Gift
@@ -131,17 +128,26 @@ export default function DonateWidget({ isModal = false, onClose }) {
         <button
           type="button"
           onClick={() => setFrequency('monthly')}
-          className={`py-2 text-xs sm:text-sm font-bold rounded-full transition-all duration-200 ${
-            frequency === 'monthly'
-              ? 'bg-plum-700 text-white shadow-xs'
-              : 'text-ink-600 hover:text-ink-900'
+          className={`relative z-10 py-2 text-xs sm:text-sm font-bold transition-colors ${
+            frequency === 'monthly' ? 'text-white' : 'text-ink-600 hover:text-ink-900'
           }`}
         >
           Monthly Support ✨
         </button>
+
+        {/* Sliding Pill Indicator with softSpring */}
+        <motion.div
+          layout
+          transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+          className="absolute inset-y-1 rounded-full bg-grad-brand shadow-xs"
+          style={{
+            left: frequency === 'one-time' ? '4px' : '50%',
+            right: frequency === 'one-time' ? '50%' : '4px',
+          }}
+        />
       </div>
 
-      {/* Preset Amounts in KES */}
+      {/* Preset Amounts in KES with Animated Gradient Slide-in */}
       <div className="mb-6">
         <label className="block text-xs font-bold uppercase tracking-wider text-ink-600 mb-2.5">
           Select Amount (KES)
@@ -154,13 +160,35 @@ export default function DonateWidget({ isModal = false, onClose }) {
                 key={amt}
                 type="button"
                 onClick={() => handleAmountClick(amt)}
-                className={`py-3 px-2 sm:px-4 rounded-2xl font-bold text-sm sm:text-base border transition-all duration-200 ${
+                className={`relative overflow-hidden py-3 px-2 sm:px-4 rounded-2xl font-bold text-sm sm:text-base border transition-all duration-200 ${
                   isSelected
-                    ? 'border-magenta-500 bg-magenta-50 text-plum-900 shadow-xs ring-2 ring-magenta-500/20'
+                    ? 'border-magenta-500 text-white shadow-xs'
                     : 'border-black/10 bg-cream-50/60 text-ink-900 hover:border-magenta-500/40 hover:bg-white'
                 }`}
               >
-                KES {amt.toLocaleString()}
+                {/* Sliding Gradient Background */}
+                <motion.div
+                  initial={false}
+                  animate={{
+                    x: isSelected ? '0%' : '-100%',
+                    opacity: isSelected ? 1 : 0,
+                  }}
+                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute inset-0 bg-grad-brand -z-0"
+                />
+
+                <span className="relative z-10 flex items-center justify-center gap-1.5">
+                  <span>KES {amt.toLocaleString()}</span>
+                  {isSelected && (
+                    <motion.span
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: 'spring', stiffness: 250 }}
+                    >
+                      <Check className="w-3.5 h-3.5" />
+                    </motion.span>
+                  )}
+                </span>
               </button>
             );
           })}
@@ -183,14 +211,26 @@ export default function DonateWidget({ isModal = false, onClose }) {
         </div>
       </div>
 
-      {/* "What your gift does" Explainer Box */}
+      {/* "What your gift does" Explainer Box with Crossfade & Odometer Feel */}
       <div className="mb-6 p-4 rounded-2xl bg-gold-50/70 border border-gold-500/25 flex items-start gap-3">
         <Sparkles className="w-5 h-5 text-gold-600 flex-shrink-0 mt-0.5" />
-        <div className="text-xs sm:text-sm text-ink-900">
+        <div className="text-xs sm:text-sm text-ink-900 overflow-hidden">
           <span className="font-bold text-gold-600 uppercase tracking-wide text-[11px] block mb-0.5">
             What your gift of KES {currentAmount ? currentAmount.toLocaleString() : '1,000'} does:
           </span>
-          {getImpactDescription(currentAmount)}
+
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={currentAmount}
+              initial={isReducedMotion ? {} : { opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={isReducedMotion ? {} : { opacity: 0, y: -6 }}
+              transition={{ duration: 0.25 }}
+              className="leading-relaxed"
+            >
+              {getImpactDescription(currentAmount)}
+            </motion.p>
+          </AnimatePresence>
         </div>
       </div>
 
@@ -238,7 +278,6 @@ export default function DonateWidget({ isModal = false, onClose }) {
           </button>
         </div>
 
-        {/* Method details with required placeholders */}
         {paymentMethod === 'mpesa' && (
           <div className="p-4 rounded-2xl bg-cream-50 border border-leaf-600/30 text-xs space-y-2">
             <div className="flex items-center justify-between border-b border-black/5 pb-2">
@@ -325,15 +364,17 @@ export default function DonateWidget({ isModal = false, onClose }) {
         </div>
 
         {/* Submit Button */}
-        <button
+        <motion.button
+          whileHover={{ y: -2 }}
+          whileTap={{ scale: 0.97 }}
           type="submit"
-          className="w-full py-3.5 rounded-full bg-magenta-500 hover:bg-magenta-600 text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all duration-200"
+          className="w-full py-3.5 rounded-full bg-grad-brand hover:opacity-95 text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-md hover:shadow-brand transition-all duration-200"
         >
           <Heart className="w-4 h-4 fill-white" />
           <span>
             Proceed with KES {currentAmount ? currentAmount.toLocaleString() : '1,000'} ({frequency})
           </span>
-        </button>
+        </motion.button>
       </form>
     </div>
   );

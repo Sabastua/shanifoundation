@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Send, Phone, Mail, MapPin, MessageSquare, Clock, CheckCircle } from 'lucide-react';
-import confetti from 'canvas-confetti';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Send, Phone, Mail, MapPin, MessageSquare, Clock, CheckCircle, AlertCircle } from 'lucide-react';
+import { triggerLeafConfetti } from './motion/LeafConfetti';
+import { useAnimationContext } from '../motion/hooks/useAnimationContext';
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -11,7 +13,10 @@ export default function ContactForm() {
     message: '',
   });
 
+  const [isLoading, setIsLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const { isReducedMotion } = useAnimationContext();
 
   const topics = [
     'General Inquiry',
@@ -25,20 +30,24 @@ export default function ContactForm() {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (errorMsg) setErrorMsg('');
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setSubmitted(true);
-    try {
-      confetti({
-        particleCount: 50,
-        spread: 60,
-        origin: { y: 0.7 },
-      });
-    } catch {
-      // Ignore
+    if (!formData.name || !formData.email || !formData.message) {
+      setErrorMsg('Please fill in all required fields.');
+      return;
     }
+
+    setIsLoading(true);
+
+    // Simulate submission with inline progress shimmer, then morph into check
+    setTimeout(() => {
+      setIsLoading(false);
+      setSubmitted(true);
+      triggerLeafConfetti();
+    }, 900);
   };
 
   const whatsappUrl = `https://wa.me/254119575385?text=${encodeURIComponent(
@@ -138,14 +147,30 @@ export default function ContactForm() {
         </div>
       </div>
 
-      {/* Right side: Interactive Form or Success */}
+      {/* Right side: Form with Growing Center Border & Progress Morph */}
       <div className="lg:col-span-7">
         <div className="bg-white p-7 sm:p-9 rounded-organic border border-black/5 shadow-brand">
           {submitted ? (
-            <div className="py-12 text-center space-y-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="py-12 text-center space-y-4"
+            >
+              {/* Animated checkmark drawing itself */}
               <div className="w-16 h-16 rounded-full bg-leaf-100 text-leaf-600 mx-auto flex items-center justify-center">
-                <CheckCircle className="w-9 h-9" />
+                <svg viewBox="0 0 24 24" className="w-10 h-10" fill="none" stroke="currentColor">
+                  <motion.path
+                    d="M 5 13 L 9 17 L 19 7"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 0.5, ease: 'easeOut' }}
+                  />
+                </svg>
               </div>
+
               <h3 className="text-2xl font-serif font-bold text-ink-900">
                 Message Received!
               </h3>
@@ -164,16 +189,33 @@ export default function ContactForm() {
                       message: '',
                     });
                   }}
-                  className="px-6 py-2.5 rounded-full border border-plum-700/30 text-plum-700 text-sm font-semibold hover:bg-magenta-50"
+                  className="px-6 py-2.5 rounded-full border border-plum-700/30 text-plum-700 text-sm font-semibold hover:bg-magenta-50 transition-colors"
                 >
                   Send Another Message
                 </button>
               </div>
-            </div>
+            </motion.div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Validation error with gentle horizontal nudge */}
+              <AnimatePresence>
+                {errorMsg && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8, x: -4 }}
+                    animate={{ opacity: 1, y: 0, x: [0, -4, 4, 0] }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.35 }}
+                    className="p-3 rounded-xl bg-magenta-100/60 border border-magenta-500/40 text-xs font-bold text-plum-900 flex items-center gap-2"
+                  >
+                    <AlertCircle className="w-4 h-4 text-magenta-500 flex-shrink-0" />
+                    <span>{errorMsg}</span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Input Group: Name & Email */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
+                <div className="relative group">
                   <label className="block text-xs font-bold uppercase tracking-wider text-ink-600 mb-1.5">
                     Your Full Name <span className="text-magenta-500">*</span>
                   </label>
@@ -184,11 +226,13 @@ export default function ContactForm() {
                     value={formData.name}
                     onChange={handleChange}
                     placeholder="e.g. Wanjiku Muthoni"
-                    className="w-full px-4 py-3 rounded-xl border border-black/10 text-sm font-medium focus:border-magenta-500 focus:ring-2 focus:ring-magenta-500/20 outline-none"
+                    className="w-full px-4 py-3 rounded-xl border border-black/10 text-sm font-medium focus:outline-none bg-cream-50/30 focus:bg-white transition-colors"
                   />
+                  {/* Center growing --grad-brand border */}
+                  <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-grad-brand scale-x-0 group-focus-within:scale-x-100 transition-transform duration-300 origin-center pointer-events-none rounded-b-xl" />
                 </div>
 
-                <div>
+                <div className="relative group">
                   <label className="block text-xs font-bold uppercase tracking-wider text-ink-600 mb-1.5">
                     Email Address <span className="text-magenta-500">*</span>
                   </label>
@@ -199,13 +243,15 @@ export default function ContactForm() {
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="e.g. wanjiku@example.com"
-                    className="w-full px-4 py-3 rounded-xl border border-black/10 text-sm font-medium focus:border-magenta-500 focus:ring-2 focus:ring-magenta-500/20 outline-none"
+                    className="w-full px-4 py-3 rounded-xl border border-black/10 text-sm font-medium focus:outline-none bg-cream-50/30 focus:bg-white transition-colors"
                   />
+                  <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-grad-brand scale-x-0 group-focus-within:scale-x-100 transition-transform duration-300 origin-center pointer-events-none rounded-b-xl" />
                 </div>
               </div>
 
+              {/* Input Group: Phone & Topic */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
+                <div className="relative group">
                   <label className="block text-xs font-bold uppercase tracking-wider text-ink-600 mb-1.5">
                     Phone / WhatsApp Number
                   </label>
@@ -215,11 +261,12 @@ export default function ContactForm() {
                     value={formData.phone}
                     onChange={handleChange}
                     placeholder="+254 7XX XXX XXX"
-                    className="w-full px-4 py-3 rounded-xl border border-black/10 text-sm font-medium focus:border-magenta-500 focus:ring-2 focus:ring-magenta-500/20 outline-none"
+                    className="w-full px-4 py-3 rounded-xl border border-black/10 text-sm font-medium focus:outline-none bg-cream-50/30 focus:bg-white transition-colors"
                   />
+                  <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-grad-brand scale-x-0 group-focus-within:scale-x-100 transition-transform duration-300 origin-center pointer-events-none rounded-b-xl" />
                 </div>
 
-                <div>
+                <div className="relative group">
                   <label className="block text-xs font-bold uppercase tracking-wider text-ink-600 mb-1.5">
                     Topic of Interest <span className="text-magenta-500">*</span>
                   </label>
@@ -227,7 +274,7 @@ export default function ContactForm() {
                     name="topic"
                     value={formData.topic}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-xl border border-black/10 text-sm font-medium bg-white focus:border-magenta-500 focus:ring-2 focus:ring-magenta-500/20 outline-none"
+                    className="w-full px-4 py-3 rounded-xl border border-black/10 text-sm font-medium bg-white focus:outline-none transition-colors"
                   >
                     {topics.map((t) => (
                       <option key={t} value={t}>
@@ -235,10 +282,12 @@ export default function ContactForm() {
                       </option>
                     ))}
                   </select>
+                  <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-grad-brand scale-x-0 group-focus-within:scale-x-100 transition-transform duration-300 origin-center pointer-events-none rounded-b-xl" />
                 </div>
               </div>
 
-              <div>
+              {/* Textarea */}
+              <div className="relative group">
                 <label className="block text-xs font-bold uppercase tracking-wider text-ink-600 mb-1.5">
                   Your Message <span className="text-magenta-500">*</span>
                 </label>
@@ -249,17 +298,31 @@ export default function ContactForm() {
                   value={formData.message}
                   onChange={handleChange}
                   placeholder="Share details on how you would like to connect or collaborate..."
-                  className="w-full px-4 py-3 rounded-xl border border-black/10 text-sm font-medium focus:border-magenta-500 focus:ring-2 focus:ring-magenta-500/20 outline-none"
+                  className="w-full px-4 py-3 rounded-xl border border-black/10 text-sm font-medium focus:outline-none bg-cream-50/30 focus:bg-white transition-colors"
                 ></textarea>
+                <span className="absolute bottom-1 left-0 right-0 h-[2px] bg-grad-brand scale-x-0 group-focus-within:scale-x-100 transition-transform duration-300 origin-center pointer-events-none rounded-b-xl" />
               </div>
 
-              <button
+              {/* Submit button with progress shimmer */}
+              <motion.button
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.97 }}
                 type="submit"
-                className="w-full py-3.5 rounded-full bg-magenta-500 hover:bg-magenta-600 text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all"
+                disabled={isLoading}
+                className="shimmer-btn-container w-full py-3.5 rounded-full bg-grad-brand hover:opacity-95 text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-md hover:shadow-brand transition-all duration-200"
               >
-                <Send className="w-4 h-4" />
-                <span>Send Message to Shani Foundation</span>
-              </button>
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Sending to Shani Foundation...</span>
+                  </div>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4" />
+                    <span>Send Message to Shani Foundation</span>
+                  </>
+                )}
+              </motion.button>
             </form>
           )}
 
@@ -268,7 +331,7 @@ export default function ContactForm() {
             <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-ink-600 mb-3">
               <span>Location: Nairobi, Kenya</span>
               <span className="text-leaf-600 flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-leaf-500"></span>
+                <span className="w-2 h-2 rounded-full bg-leaf-500 animate-pulse" />
                 Active Field Work
               </span>
             </div>
