@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --plum-900: #4A0A38;
+  --plum-700: #7A0F5A;
+  --magenta-500: #A3277A;
+  --magenta-100: #F6E4F0;
+  --leaf-600: #3F7D2B;
+  --leaf-500: #8DB63C;
+  --forest-800: #2E5A2B;
+  --gold-500: #E8A33D;
+  --gold-100: #FCF1DC;
+  --ink-900: #231A21;
+  --ink-600: #5B4F58;
+  --cream-50: #FFFDFA;
+  --white: #FFFFFF;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    color: #231A21;
+    background-color: #FFFDFA;
+  }
+
+  /* Fluid typography */
+  h1 {
+    font-family: 'Fraunces', 'Playfair Display', Georgia, serif;
+    font-size: clamp(2.35rem, 5vw, 4.25rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+
+  h2 {
+    font-family: 'Fraunces', 'Playfair Display', Georgia, serif;
+    font-size: clamp(1.8rem, 3.5vw, 2.75rem);
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    font-weight: 600;
+  }
+
+  h3 {
+    font-family: 'Fraunces', 'Playfair Display', Georgia, serif;
+    font-size: clamp(1.35rem, 2.2vw, 1.85rem);
+    line-height: 1.25;
+    font-weight: 600;
+  }
+
+  p {
+    line-height: 1.65;
+  }
+
+  /* Accessible focus indicators */
+  :focus-visible {
+    outline: 3px solid #E8A33D;
+    outline-offset: 2px;
+  }
+}
+
+/* Accessibility: Skip to Content */
+.skip-link {
+  position: absolute;
+  top: -9999px;
+  left: 1rem;
+  background: #A3277A;
+  color: #FFFFFF;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  z-index: 99999;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* Ribbon styling with angled end */
+.ribbon-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 9999px;
+}
+
+/* Organic blob mask helpers */
+.blob-shape {
+  border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
+  transition: all 0.8s ease-in-out;
+}
+
+.blob-shape:hover {
+  border-radius: 58% 42% 38% 62% / 55% 65% 35% 45%;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FFFDFA;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #E8A33D;
+  border-radius: 5px;
+  border: 2px solid #FFFDFA;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #A3277A;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
