@@ -1,8 +1,6 @@
-@import "./styles/gradients.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 
 :root {
   --plum-900: #4A0A38;

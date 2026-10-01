@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, useScroll } from 'framer-motion';
+import React, { useState } from 'react';
 import {
   Heart,
   ArrowRight,
@@ -10,10 +9,11 @@ import {
   Sparkles,
   Droplet,
   Globe2,
+  GraduationCap,
   Mail,
   Send,
+  HelpCircle,
   Quote,
-  ChevronDown,
 } from 'lucide-react';
 import RibbonLabel from '../components/RibbonLabel';
 import FocusCard from '../components/FocusCard';
@@ -21,32 +21,10 @@ import ValueTile from '../components/ValueTile';
 import Counter from '../components/Counter';
 import StoryCard from '../components/StoryCard';
 import Logo from '../components/Logo';
-import BlobMask from '../components/motion/BlobMask';
-import FloatingLeaves from '../components/motion/FloatingLeaves';
-import CurvedDivider from '../components/motion/CurvedDivider';
-import GradientText from '../components/motion/GradientText';
-import MagneticButton from '../components/motion/MagneticButton';
-import { useCard3DTilt } from '../motion/hooks/useParallax';
-import { useAnimationContext } from '../motion/hooks/useAnimationContext';
 
 export default function HomePage({ setActivePage, onOpenDonate }) {
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
-  const [hasScrolled, setHasScrolled] = useState(false);
-  const { isReducedMotion } = useAnimationContext();
-
-  // 3D tilt for Vision & Mission cards
-  const visionTilt = useCard3DTilt(4);
-  const missionTilt = useCard3DTilt(4);
-
-  // Scroll cue visibility
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 50) setHasScrolled(true);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const handleNewsletterSubmit = (e) => {
     e.preventDefault();
@@ -55,123 +33,47 @@ export default function HomePage({ setActivePage, onOpenDonate }) {
     }
   };
 
-  // Headline split words for staggered reveal
-  const headlineWords = ['Empowering', 'Women.'];
-
   return (
-    <div className="space-y-16 sm:space-y-24 pb-12 overflow-hidden">
-      {/* 1. HERO SECTION WITH MESH GRADIENT & DRIFTING ORBS */}
-      <section className="relative overflow-hidden pt-4 sm:pt-8 pb-16 sm:pb-24 bg-grad-mesh-hero">
-        {/* Floating leaves & sparkles ambient motif */}
-        <FloatingLeaves />
+    <div className="space-y-16 sm:space-y-24 pb-12">
+      {/* 1. HERO SECTION */}
+      <section className="relative overflow-hidden pt-6 sm:pt-12 pb-12 sm:pb-20">
+        {/* Soft background glow & organic accent shapes */}
+        <div className="absolute top-10 right-[-10%] w-[500px] h-[500px] rounded-full bg-magenta-100/40 blur-3xl -z-10 pointer-events-none" />
+        <div className="absolute bottom-10 left-[-5%] w-[400px] h-[400px] rounded-full bg-gold-100/50 blur-3xl -z-10 pointer-events-none" />
 
-        {/* 3 Blurred Ambient Gradient Orbs (14-20s loops, translate/scale only) */}
-        {!isReducedMotion && (
-          <>
-            <motion.div
-              animate={{
-                x: [-20, 30, -20],
-                y: [-30, 20, -30],
-                scale: [1, 1.1, 1],
-              }}
-              transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
-              className="absolute top-[-5%] left-[-5%] w-[480px] h-[480px] rounded-full bg-magenta-100/50 blur-3xl pointer-events-none -z-10"
-            />
-            <motion.div
-              animate={{
-                x: [30, -25, 30],
-                y: [20, -30, 20],
-                scale: [1.05, 0.95, 1.05],
-              }}
-              transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-              className="absolute bottom-[10%] right-[-5%] w-[520px] h-[520px] rounded-full bg-gold-100/60 blur-3xl pointer-events-none -z-10"
-            />
-            <motion.div
-              animate={{
-                x: [-15, 20, -15],
-                y: [15, -20, 15],
-                scale: [0.95, 1.08, 0.95],
-              }}
-              transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-              className="absolute bottom-[-10%] left-[30%] w-[380px] h-[380px] rounded-full bg-leaf-500/10 blur-3xl pointer-events-none -z-10"
-            />
-          </>
-        )}
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
             {/* Left Content */}
             <div className="lg:col-span-7 space-y-6 sm:space-y-7 text-center lg:text-left">
-              {/* "We Got You" badge with rotating conic ring */}
-              <div className="inline-block relative">
-                {/* 6s Rotating conic gradient ring around badge */}
-                {!isReducedMotion && (
-                  <div className="conic-ring absolute -inset-1 rounded-full opacity-60 blur-[3px]" />
-                )}
-                <motion.div
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: 'spring', stiffness: 120, damping: 18 }}
-                  className="relative px-4 py-1.5 rounded-full bg-white text-ink-900 text-xs sm:text-sm font-bold shadow-xs border border-gold-500/30 flex items-center gap-2"
-                >
-                  <Sparkles className="w-4 h-4 text-gold-500" />
-                  <span>"We Got You" • Nairobi, Kenya</span>
-                </motion.div>
+              {/* Warm gold badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gold-100 border border-gold-500/40 text-ink-900 text-xs sm:text-sm font-bold shadow-xs">
+                <Sparkles className="w-4 h-4 text-gold-600" />
+                <span>"We Got You" • Nairobi, Kenya</span>
               </div>
 
-              {/* H1 Headline: Words Rise 24px + Wipe on "Sustaining Communities" */}
+              {/* H1 Primary Tagline */}
               <h1 className="font-serif font-bold text-plum-900 text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.12]">
-                {headlineWords.map((word, idx) => (
-                  <motion.span
-                    key={idx}
-                    initial={isReducedMotion ? {} : { opacity: 0, y: 24 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      duration: 0.5,
-                      delay: idx * 0.08,
-                      ease: [0.22, 1, 0.36, 1],
-                    }}
-                    className="inline-block mr-3"
-                  >
-                    {word}
-                  </motion.span>
-                ))}{' '}
-                <GradientText gradient="bloom" animateWipe={true}>
+                Empowering Women.{' '}
+                <span className="text-magenta-500 block sm:inline">
                   Sustaining Communities.
-                </GradientText>
+                </span>
               </h1>
 
               {/* Sub-line verbatim from mission */}
-              <motion.p
-                initial={isReducedMotion ? {} : { opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                className="text-ink-600 text-base sm:text-lg lg:text-xl max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal"
-              >
+              <p className="text-ink-600 text-base sm:text-lg lg:text-xl max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal">
                 To support menstrual health, climate action, and community empowerment initiatives across Nairobi and underserved Kenyan communities.
-              </motion.p>
+              </p>
 
-              {/* Staggered CTAs */}
-              <motion.div
-                initial={isReducedMotion ? {} : { opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2"
-              >
-                <motion.button
-                  whileHover={{ y: -2 }}
-                  whileTap={{ scale: 0.97 }}
+              {/* Two CTAs */}
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+                <button
                   onClick={onOpenDonate}
-                  className="shimmer-btn-container w-full sm:w-auto px-8 py-4 rounded-full bg-grad-brand text-white font-bold text-base shadow-md hover:shadow-brand transition-all duration-200 flex items-center justify-center gap-2.5"
+                  className="w-full sm:w-auto px-8 py-4 rounded-full bg-magenta-500 hover:bg-magenta-600 text-white font-bold text-base shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2.5 active:translate-y-0"
                 >
-                  {!isReducedMotion && <span className="shimmer-sweep" />}
-                  <Heart className="w-5 h-5 fill-white text-white relative z-10" />
-                  <span className="relative z-10">Support Our Work</span>
-                </motion.button>
-
-                <motion.button
-                  whileHover={{ y: -2 }}
-                  whileTap={{ scale: 0.97 }}
+                  <Heart className="w-5 h-5 fill-white text-white" />
+                  <span>Support Our Work</span>
+                </button>
+                <button
                   onClick={() => {
                     setActivePage('our-work');
                     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -180,10 +82,10 @@ export default function HomePage({ setActivePage, onOpenDonate }) {
                 >
                   <span>Learn More</span>
                   <ArrowRight className="w-4 h-4" />
-                </motion.button>
-              </motion.div>
+                </button>
+              </div>
 
-              {/* Trust signals */}
+              {/* Trust signals snippet */}
               <div className="pt-4 flex flex-wrap items-center justify-center lg:justify-start gap-y-2 gap-x-6 text-xs text-ink-600 font-medium">
                 <span className="flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-leaf-600" />
@@ -200,14 +102,18 @@ export default function HomePage({ setActivePage, onOpenDonate }) {
               </div>
             </div>
 
-            {/* Right Hero Image inside Morphing BlobMask */}
+            {/* Right Hero Image in Organic Blob Mask with Sprout Motif */}
             <div className="lg:col-span-5 relative flex justify-center items-center">
-              <BlobMask className="w-full max-w-[420px] aspect-square">
-                <div className="w-full h-full flex flex-col items-center justify-center p-8 text-center relative group">
-                  {/* Subtle plum gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-plum-900/10 via-transparent to-plum-900/30" />
+              {/* Outer decorative ring */}
+              <div className="absolute inset-0 border-2 border-dashed border-gold-500/30 rounded-full animate-spin-slow pointer-events-none scale-110"></div>
 
-                  {/* Logo sprout motif */}
+              {/* Organic Blob Container */}
+              <div className="relative w-full max-w-[420px] aspect-square blob-shape bg-gradient-to-tr from-plum-700 via-magenta-500 to-gold-500 p-2 shadow-2xl flex items-center justify-center overflow-hidden">
+                <div className="w-full h-full blob-shape bg-cream-50 flex flex-col items-center justify-center p-8 text-center relative overflow-hidden group">
+                  {/* Subtle plum gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-plum-900/10 via-transparent to-plum-900/30"></div>
+
+                  {/* Logo sprout motif floating subtly */}
                   <div className="relative z-10 mb-4 transform group-hover:scale-105 transition-transform duration-500">
                     <Logo variant="mark" size="xl" />
                   </div>
@@ -221,34 +127,20 @@ export default function HomePage({ setActivePage, onOpenDonate }) {
                       Warm, candid, dignified photography
                     </p>
                   </div>
+
+                  {/* Floating gold "We Got You" badge */}
+                  <div className="absolute bottom-6 right-6 z-20 px-3.5 py-1.5 rounded-full bg-gold-500 text-ink-900 font-extrabold text-xs shadow-md border-2 border-white transform hover:rotate-3 transition-transform">
+                    ✨ We Got You
+                  </div>
                 </div>
-              </BlobMask>
+              </div>
             </div>
           </div>
         </div>
-
-        {/* Bobbing Scroll Cue (fades out after first scroll) */}
-        {!hasScrolled && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1, y: [0, 8, 0] }}
-            transition={{
-              opacity: { duration: 0.5, delay: 1 },
-              y: { duration: 1.8, repeat: Infinity, ease: 'easeInOut' },
-            }}
-            className="hidden sm:flex flex-col items-center justify-center mx-auto mt-10 text-xs font-bold text-ink-600"
-            aria-hidden="true"
-          >
-            <span className="uppercase tracking-widest text-[10px] text-plum-700 mb-1">
-              Scroll Down
-            </span>
-            <ChevronDown className="w-4 h-4 text-plum-700" />
-          </motion.div>
-        )}
       </section>
 
       {/* 2. TRUST STRIP */}
-      <section className="border-y border-black/5 bg-white py-6 shadow-xs relative">
+      <section className="border-y border-black/5 bg-white py-6 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 text-center">
             <div className="flex flex-col items-center justify-center p-3 rounded-xl bg-cream-50/60 border border-black/5">
@@ -271,7 +163,7 @@ export default function HomePage({ setActivePage, onOpenDonate }) {
         </div>
       </section>
 
-      {/* 3. VISION & MISSION CARDS (Rise from opposite sides + 3D tilt + 10s quotation shift) */}
+      {/* 3. VISION & MISSION CARDS */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-10">
           <RibbonLabel variant="plum" className="mb-3">
@@ -283,30 +175,9 @@ export default function HomePage({ setActivePage, onOpenDonate }) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
-          {/* Vision Card: Rises in from Left */}
-          <motion.div
-            ref={visionTilt.cardRef}
-            initial={isReducedMotion ? {} : { opacity: 0, x: -40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            style={{
-              perspective: 1000,
-              rotateX: isReducedMotion ? 0 : visionTilt.rotateX,
-              rotateY: isReducedMotion ? 0 : visionTilt.rotateY,
-            }}
-            className="relative p-8 sm:p-10 rounded-organic bg-gradient-to-br from-gold-100/90 to-gold-50 border border-gold-500/40 shadow-brand flex flex-col justify-between overflow-hidden transition-shadow duration-300 hover:shadow-brand-gold"
-          >
-            {/* Shifting Quote Graphic (10s position loop) */}
-            <div
-              className="absolute -top-4 -right-4 w-36 h-36 opacity-15 pointer-events-none"
-              style={{
-                background: 'linear-gradient(135deg, #E8A33D, #F3C566, #E8A33D)',
-                WebkitMaskImage: 'radial-gradient(circle, black, transparent)',
-              }}
-            >
-              <Quote className="w-full h-full text-gold-500" />
-            </div>
+          {/* Vision: Warm gold-tinted card with gold ribbon label */}
+          <div className="relative p-8 sm:p-10 rounded-organic bg-gradient-to-br from-gold-100/90 to-gold-50 border border-gold-500/40 shadow-brand flex flex-col justify-between overflow-hidden group hover:-translate-y-1 transition-transform">
+            <Quote className="absolute -top-4 -right-4 w-32 h-32 text-gold-500/15 pointer-events-none" />
 
             <div>
               <div className="flex items-center justify-between mb-6">
@@ -326,25 +197,11 @@ export default function HomePage({ setActivePage, onOpenDonate }) {
             <p className="text-xs sm:text-sm text-ink-600 font-medium border-t border-gold-500/20 pt-4">
               Building lasting pathways for generational self-reliance, social dignity, and community-led renewal.
             </p>
-          </motion.div>
+          </div>
 
-          {/* Mission Card: Rises in from Right */}
-          <motion.div
-            ref={missionTilt.cardRef}
-            initial={isReducedMotion ? {} : { opacity: 0, x: 40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            style={{
-              perspective: 1000,
-              rotateX: isReducedMotion ? 0 : missionTilt.rotateX,
-              rotateY: isReducedMotion ? 0 : missionTilt.rotateY,
-            }}
-            className="relative p-8 sm:p-10 rounded-organic bg-forest-800 text-white shadow-brand-green flex flex-col justify-between overflow-hidden transition-shadow duration-300"
-          >
-            <div className="absolute -top-4 -right-4 w-36 h-36 opacity-15 pointer-events-none">
-              <Quote className="w-full h-full text-white" />
-            </div>
+          {/* Mission: Forest-green card with white text and green ribbon label */}
+          <div className="relative p-8 sm:p-10 rounded-organic bg-forest-800 text-white shadow-brand-green flex flex-col justify-between overflow-hidden group hover:-translate-y-1 transition-transform">
+            <Quote className="absolute -top-4 -right-4 w-32 h-32 text-white/10 pointer-events-none" />
 
             <div>
               <div className="flex items-center justify-between mb-6">
@@ -364,7 +221,7 @@ export default function HomePage({ setActivePage, onOpenDonate }) {
             <p className="text-xs sm:text-sm text-gold-100/80 font-medium border-t border-white/20 pt-4">
               Translating compassion into concrete field interventions, educational kits, and grassroots partnerships.
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -446,8 +303,8 @@ export default function HomePage({ setActivePage, onOpenDonate }) {
         </div>
       </section>
 
-      {/* 5. HOW WE WORK (TIMELINE WITH DRAWING CONNECTING LINE) */}
-      <section className="bg-cream-100/60 py-16 sm:py-20 border-y border-black/5 relative">
+      {/* 5. HOW WE WORK (HORIZONTAL TIMELINE) */}
+      <section className="bg-cream-100/60 py-16 sm:py-20 border-y border-black/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <RibbonLabel variant="plum" className="mb-3">
@@ -461,50 +318,49 @@ export default function HomePage({ setActivePage, onOpenDonate }) {
             </p>
           </div>
 
-          <div className="relative">
-            {/* Horizontal Connecting Line that draws itself */}
-            <div className="hidden md:block absolute top-10 left-[10%] right-[10%] h-1 pointer-events-none">
-              <svg className="w-full h-full" preserveAspectRatio="none">
-                <motion.line
-                  x1="0%"
-                  y1="50%"
-                  x2="100%"
-                  y2="50%"
-                  stroke="#E8A33D"
-                  strokeWidth="3"
-                  strokeDasharray="6 6"
-                  initial={{ pathLength: 0 }}
-                  whileInView={{ pathLength: 1 }}
-                  viewport={{ once: true, amount: 0.3 }}
-                  transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
-                />
-              </svg>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
+            {/* Step 1: Listen */}
+            <div className="bg-white p-6 sm:p-7 rounded-2xl border border-black/5 shadow-brand text-center md:text-left relative">
+              <span className="text-3xl font-serif font-bold text-gold-500 mb-2 block">
+                01
+              </span>
+              <h3 className="text-lg font-bold text-ink-900 mb-2">Listen</h3>
+              <p className="text-ink-600 text-xs sm:text-sm leading-relaxed">
+                [Add: Detail on community listening sessions, identifying local needs directly with women and youth leaders in Nairobi].
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-10">
-              {[
-                { step: '01', title: 'Listen', color: 'text-gold-500', desc: '[Add: Detail on community listening sessions, identifying local needs directly with women and youth leaders in Nairobi].' },
-                { step: '02', title: 'Partner', color: 'text-magenta-500', desc: '[Add: Detail on collaborating with local schools, youth groups, and community health volunteers to co-create solutions].' },
-                { step: '03', title: 'Deliver', color: 'text-leaf-600', desc: '[Add: Detail on deploying dignity kits, planting trees, conducting mentorship programs, and safeguarding training].' },
-                { step: '04', title: 'Sustain', color: 'text-plum-700', desc: '[Add: Detail on ongoing monitoring, community ownership, and transparent reporting to keep initiatives thriving].' },
-              ].map((item, idx) => (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: idx * 0.15 }}
-                  className="bg-white p-6 sm:p-7 rounded-2xl border border-black/5 shadow-brand text-center md:text-left hover:-translate-y-1 transition-transform"
-                >
-                  <span className={`text-3xl font-serif font-bold ${item.color} mb-2 block`}>
-                    {item.step}
-                  </span>
-                  <h3 className="text-lg font-bold text-ink-900 mb-2">{item.title}</h3>
-                  <p className="text-ink-600 text-xs sm:text-sm leading-relaxed">
-                    {item.desc}
-                  </p>
-                </motion.div>
-              ))}
+            {/* Step 2: Partner */}
+            <div className="bg-white p-6 sm:p-7 rounded-2xl border border-black/5 shadow-brand text-center md:text-left relative">
+              <span className="text-3xl font-serif font-bold text-magenta-500 mb-2 block">
+                02
+              </span>
+              <h3 className="text-lg font-bold text-ink-900 mb-2">Partner</h3>
+              <p className="text-ink-600 text-xs sm:text-sm leading-relaxed">
+                [Add: Detail on collaborating with local schools, youth groups, and community health volunteers to co-create solutions].
+              </p>
+            </div>
+
+            {/* Step 3: Deliver */}
+            <div className="bg-white p-6 sm:p-7 rounded-2xl border border-black/5 shadow-brand text-center md:text-left relative">
+              <span className="text-3xl font-serif font-bold text-leaf-600 mb-2 block">
+                03
+              </span>
+              <h3 className="text-lg font-bold text-ink-900 mb-2">Deliver</h3>
+              <p className="text-ink-600 text-xs sm:text-sm leading-relaxed">
+                [Add: Detail on deploying dignity kits, planting trees, conducting mentorship programs, and safeguarding training].
+              </p>
+            </div>
+
+            {/* Step 4: Sustain */}
+            <div className="bg-white p-6 sm:p-7 rounded-2xl border border-black/5 shadow-brand text-center md:text-left relative">
+              <span className="text-3xl font-serif font-bold text-plum-700 mb-2 block">
+                04
+              </span>
+              <h3 className="text-lg font-bold text-ink-900 mb-2">Sustain</h3>
+              <p className="text-ink-600 text-xs sm:text-sm leading-relaxed">
+                [Add: Detail on ongoing monitoring, community ownership, and transparent reporting to keep initiatives thriving].
+              </p>
             </div>
           </div>
         </div>
@@ -590,7 +446,7 @@ export default function HomePage({ setActivePage, onOpenDonate }) {
         </div>
       </section>
 
-      {/* 8. STORIES (DRAGGABLE CAROUSEL WITH PROGRESS BAR) */}
+      {/* 8. STORIES (3-CARD GRID PLACEHOLDERS) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
           <div>
@@ -659,24 +515,11 @@ export default function HomePage({ setActivePage, onOpenDonate }) {
         </div>
       </section>
 
-      {/* 9. GET INVOLVED (ANIMATED --GRAD-BRAND BAND WITH FLOATING CIRCLES & MAGNETIC BUTTONS) */}
+      {/* 9. GET INVOLVED (GRADIENT PLUM->MAGENTA BAND WITH 4 PATHWAYS) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="rounded-organic-xl animate-gradient-shift bg-grad-brand p-8 sm:p-14 text-white shadow-2xl relative overflow-hidden">
-          {/* Subtle floating translucent circles */}
-          {!isReducedMotion && (
-            <>
-              <motion.div
-                animate={{ y: [-15, 15, -15], x: [-10, 10, -10] }}
-                transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute top-4 right-8 w-44 h-44 rounded-full bg-white/10 blur-xl pointer-events-none"
-              />
-              <motion.div
-                animate={{ y: [15, -15, 15], x: [10, -10, 10] }}
-                transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-                className="absolute bottom-4 left-8 w-56 h-56 rounded-full bg-gold-500/15 blur-2xl pointer-events-none"
-              />
-            </>
-          )}
+        <div className="rounded-organic-xl bg-gradient-to-br from-plum-900 via-plum-700 to-magenta-500 p-8 sm:p-14 text-white shadow-2xl relative overflow-hidden">
+          {/* Subtle background circles */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-2xl pointer-events-none"></div>
 
           <div className="relative z-10 text-center max-w-2xl mx-auto mb-12">
             <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 text-gold-100 text-xs font-bold uppercase tracking-wider mb-4 border border-white/20">
@@ -702,12 +545,12 @@ export default function HomePage({ setActivePage, onOpenDonate }) {
                   Provide essential funds for dignity kits, seed nurseries, and field operations in Nairobi.
                 </p>
               </div>
-              <MagneticButton
+              <button
                 onClick={onOpenDonate}
                 className="w-full py-2.5 rounded-full bg-white text-plum-900 font-bold text-xs hover:bg-gold-100 transition-colors shadow-sm"
               >
                 Make a Gift
-              </MagneticButton>
+              </button>
             </div>
 
             {/* Pathway 2: Volunteer */}
@@ -721,7 +564,7 @@ export default function HomePage({ setActivePage, onOpenDonate }) {
                   Contribute your time, mentorship, medical training, or community facilitation skills.
                 </p>
               </div>
-              <MagneticButton
+              <button
                 onClick={() => {
                   setActivePage('get-involved');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -729,7 +572,7 @@ export default function HomePage({ setActivePage, onOpenDonate }) {
                 className="w-full py-2.5 rounded-full bg-white text-plum-900 font-bold text-xs hover:bg-gold-100 transition-colors shadow-sm"
               >
                 Join Volunteer Team
-              </MagneticButton>
+              </button>
             </div>
 
             {/* Pathway 3: Partner */}
@@ -743,7 +586,7 @@ export default function HomePage({ setActivePage, onOpenDonate }) {
                   CSR collaboration for corporates, institutions, and international foundations.
                 </p>
               </div>
-              <MagneticButton
+              <button
                 onClick={() => {
                   setActivePage('contact');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -751,7 +594,7 @@ export default function HomePage({ setActivePage, onOpenDonate }) {
                 className="w-full py-2.5 rounded-full bg-white text-plum-900 font-bold text-xs hover:bg-gold-100 transition-colors shadow-sm"
               >
                 Inquire Partnership
-              </MagneticButton>
+              </button>
             </div>
 
             {/* Pathway 4: Sponsor a Dignity Kit */}
@@ -767,12 +610,12 @@ export default function HomePage({ setActivePage, onOpenDonate }) {
                   [Add: Sponsor a Girl's Dignity Kit placeholder: KES 500 covers hygiene pads, soap, and innerwear for one term].
                 </p>
               </div>
-              <MagneticButton
+              <button
                 onClick={onOpenDonate}
                 className="w-full py-2.5 rounded-full bg-gold-500 text-ink-900 font-bold text-xs hover:bg-gold-600 transition-colors shadow-sm"
               >
                 Sponsor a Girl
-              </MagneticButton>
+              </button>
             </div>
           </div>
         </div>
